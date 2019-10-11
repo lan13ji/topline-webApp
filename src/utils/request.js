@@ -3,6 +3,8 @@
  */
 import axios from 'axios'
 
+import jsonBig from 'json-bigint'
+
 // 之前的写法
 // axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/'
 // 之前为了方便，把 axios 挂载到 Vue 的原型对象上 $axios
@@ -18,6 +20,10 @@ const request = axios.create({
   // 请求的基础路径
   baseURL: 'http://ttapi.research.itcast.cn/'
 })
+
+request.defaults.transformResponse = [function (data) {
+  return data ? jsonBig.parse(data) : {}
+}]
 
 /*
  * 请求拦截器
