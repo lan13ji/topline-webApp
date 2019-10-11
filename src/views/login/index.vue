@@ -21,5 +21,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.login {
+ .login-btn {
+   padding: 20px;
 
+   .van-button {
+      width: 100%;
+    }
+  }
+}
 </style>
