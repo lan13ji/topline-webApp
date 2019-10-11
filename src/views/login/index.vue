@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+// import request from '@/utils/request'
+import { login } from '@/api/user'
 export default {
   name: 'LoginIndex',
   data () {
@@ -30,11 +31,12 @@ export default {
     async onLogin () {
       try {
         // 请求提交表单数据
-        const { data } = await request({
+        const { data } = await login(this.user)
+        /* const { data } = await request({
           method: 'POST',
           url: '/app/v1_0/authorizations',
           data: this.user
-        })
+        }) */
         console.log(data)
         this.$toast.success('登录成功')
       } catch (err) {
