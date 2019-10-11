@@ -2,10 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Button, NavBar, Field, Cell, CellGroup } from 'vant'
+import { Button, NavBar, Field, Cell, CellGroup, Toast } from 'vant'
 import './styles/index.less'
 // 注册组件
-Vue.use(Button).use(NavBar).use(Field).use(Cell).use(CellGroup)
+Vue.use(Button).use(NavBar).use(Field).use(Cell).use(CellGroup).use(Toast)
 
 Vue.config.productionTip = false
 
