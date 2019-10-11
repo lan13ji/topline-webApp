@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-
+<router-view></router-view>
   </div>
 </template>
 
@@ -11,7 +11,7 @@ request({
   method: 'GET',
   url: '/app/v1_0/channels'
 }).then(res => {
-  console.log(res.data)
+  // console.log(res.data)
 })
 export default {
   name: 'App'
