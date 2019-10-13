@@ -13,7 +13,7 @@
           errors[0] 读取校验结果的失败信息
           tag 指定渲染元素，默认是span
          -->
-        <ValidationProvider name="手机号" rules="required" v-slot="{ errors}">
+        <ValidationProvider name="手机号" rules="required|max:11|phone" v-slot="{ errors}">
           <van-field required clearable label="手机号" placeholder="请输入手机号" v-model="user.mobile" :error-message="errors[0]"></van-field>
         </ValidationProvider>
         <ValidationProvider name="验证码" rules="required|max:6" v-slot="{ errors }">
@@ -36,8 +36,8 @@ export default {
   data () {
     return {
       user: {
-        mobile: '13011111111', // 手机号
-        code: '246810' // 验证码
+        mobile: '', // 手机号
+        code: '246810' // 验证码 246810
       }
     }
   },

@@ -22,6 +22,17 @@ for (let rule in rules) {
 Vue.component('ValidationProvider', ValidationProvider)
 Vue.component('ValidationObserver', ValidationObserver)
 
+// 扩展自定义校验规则
+// extend('规则名称',配置对象)
+extend('phone', {
+  // 验证方法，value是需要校验的数据，返回 布尔值,表示成功或失败
+  validate: function (value) {
+    return /^[1]([3-9])\d{9}$/.test(value)
+  },
+  // 错误的消息
+  message: '请输入有效的手机号码'
+})
+
 // 注册组件
 Vue.use(Button).use(NavBar).use(Field).use(Cell).use(CellGroup).use(Toast)
 
