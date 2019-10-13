@@ -62,9 +62,12 @@ export default {
           url: '/app/v1_0/authorizations',
           data: this.user
         }) */
-        console.log(data)
+
         // 先清除 loading
         toast.clear()
+        // 登录成功，将token存储到vuex
+        this.$store.commit('setUser', data.data)
+
         // 再提示登陆成功
         /* this.$toast.success({
           duration: 2000,
