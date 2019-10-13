@@ -5,6 +5,8 @@ import axios from 'axios'
 
 import jsonBig from 'json-bigint'
 
+import store from '@/store'
+
 // 之前的写法
 // axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/'
 // 之前为了方便，把 axios 挂载到 Vue 的原型对象上 $axios
@@ -26,9 +28,21 @@ request.defaults.transformResponse = [function (data) {
 }]
 
 /*
- * 请求拦截器
+ * 请求拦截器 请求到达后台之前拦截
  */
-
+request.interceptors.request.use(function (config) {
+  // 在发起请求时做一些业务处理
+  // config  发送请求的配置信息
+  const { user } = store.state // 获取用户信息
+  if (user) {
+    // Authorization 是后端要求的字段，不可以自定义
+    // "Bearer token" 是后端要求的数据格式 ，不可以自定义, Bearer和token之间 空格 不能丢失
+    config.headers['Authorization'] = `Bearer ${user.token}`
+  }
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
 /*
  * 响应拦截器
  */

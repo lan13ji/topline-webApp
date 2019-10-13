@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getItem } from '@/utils/storage'
+import { getItem, setItem } from '@/utils/storage'
 
 Vue.use(Vuex)
 
@@ -15,6 +15,9 @@ export default new Vuex.Store({
     // 参数2： 自定义参数
     setUser (state, user) {
       state.user = user
+
+      // 存储数据的同时将数据存储到本地存储中
+      setItem('user', state.user)
     }
   },
   actions: {
