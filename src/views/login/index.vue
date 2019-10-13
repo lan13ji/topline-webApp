@@ -4,10 +4,24 @@
     <van-nav-bar title="标题"></van-nav-bar>
     <!-- /导航栏 -->
     <!-- 登录表单 -->
-    <van-cell-group>
-      <van-field required clearable label="手机号" placeholder="请输入手机号" v-model="user.mobile"></van-field>
-      <van-field required type="password" label="验证码" placeholder="请输入验证码" v-model="user.code"></van-field>
-    </van-cell-group>
+    <ValidationObserver tag="form" ref="loginForm">
+      <van-cell-group>
+        <!--
+          name 提示文本
+          rules 验证规则
+          v-slot="{ errors }" 获取校验结果数据
+          errors[0] 读取校验结果的失败信息
+          tag 指定渲染元素，默认是span
+         -->
+        <ValidationProvider name="手机号" rules="required" v-slot="{ errors}">
+          <van-field required clearable label="手机号" placeholder="请输入手机号" v-model="user.mobile" :error-message="errors[0]"></van-field>
+        </ValidationProvider>
+        <ValidationProvider name="验证码" rules="required|max:6" v-slot="{ errors }">
+          <van-field required type="password" label="验证码" placeholder="请输入验证码" v-model="user.code" :error-message="errors[0]"></van-field>
+        </ValidationProvider>
+      </van-cell-group>
+    </ValidationObserver>
+    <!-- 登录按钮 -->
     <div class="login-btn">
       <van-button type="info" @click="onLogin">登录</van-button>
     </div>
@@ -31,6 +45,8 @@ export default {
     async onLogin () {
       try {
         // 表单验证
+        const isValid = await this.$refs.loginForm.validate()
+        if (!isValid) return // 如果验证失败，阻止表单提交
 
         // 验证通过，loading，请求
         const toast = this.$toast.loading({
