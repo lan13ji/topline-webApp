@@ -71,8 +71,7 @@ export default {
         this.$store.commit('setUser', data.data)
 
         // 为了防止刷新token丢失，将token存储到本地存储
-        // 也可以将这一步写入store/index中
-        // setItem('user', data.data)
+        setItem('user', data.data)
 
         // 再提示登陆成功
         /* this.$toast.success({
