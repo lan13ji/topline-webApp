@@ -30,6 +30,15 @@ export default {
   methods: {
     async onLogin () {
       try {
+        // 表单验证
+
+        // 验证通过，loading，请求
+        const toast = this.$toast.loading({
+          duration: 0, // 持续展示toast
+          forbidClick: true, // 禁用背景点击
+          loadingType: 'spinner',
+          message: '登录中'
+        })
         // 请求提交表单数据
         const { data } = await login(this.user)
         /* const { data } = await request({
@@ -38,6 +47,13 @@ export default {
           data: this.user
         }) */
         console.log(data)
+        // 先清除 loading
+        toast.clear()
+        // 再提示登陆成功
+        /* this.$toast.success({
+          duration: 2000,
+          message: '登录成功'
+        }) */
         this.$toast.success('登录成功')
       } catch (err) {
         // 所有大于等于 400 的状态码都会进入 catch
