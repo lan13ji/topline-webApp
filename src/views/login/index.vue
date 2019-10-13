@@ -31,6 +31,7 @@
 <script>
 // import request from '@/utils/request'
 import { login } from '@/api/user'
+import { setItem } from '@/utils/storage'
 export default {
   name: 'LoginIndex',
   data () {
@@ -65,8 +66,12 @@ export default {
 
         // 先清除 loading
         toast.clear()
+
         // 登录成功，将token存储到vuex
         this.$store.commit('setUser', data.data)
+
+        // 为了防止刷新token丢失，将token存储到本地存储
+        setItem('user', data.data)
 
         // 再提示登陆成功
         /* this.$toast.success({
