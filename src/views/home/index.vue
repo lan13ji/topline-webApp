@@ -5,14 +5,12 @@
 
     <!-- 频道列表 -->
     <van-tabs v-model="active">
-      <van-tab title="标签1">
+      <van-tab v-for="channel in channels" :title="channel.name" :key="channel.id">
         <!-- 文章列表 -->
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
           <van-cell v-for="item in list" :key="item" :title="item"></van-cell>
         </van-list>
       </van-tab>
-      <van-tab title="标签2">内容2</van-tab>
-      <van-tab title="标签3">内容3</van-tab>
     </van-tabs>
     <!--  -->
 
@@ -20,17 +18,23 @@
 </template>
 
 <script>
+import { getDefaultChannels } from '@/api/channels'
 export default {
   name: 'HomeIndex',
   data () {
     return {
-      active: 0,
+      active: 0, // 当前激活的tab标签
+      channels: [], // 频道列表
       list: [],
       loading: false,
       finished: false
     }
   },
   methods: {
+    async loadChannels () {
+      const { data } = await getDefaultChannels()
+      this.channels = data.data.channels
+    },
     onLoad () {
       // 异步更新数据
       setTimeout(() => {
@@ -46,6 +50,9 @@ export default {
         }
       }, 500)
     }
+  },
+  created () {
+    this.loadChannels()
   }
 }
 </script>

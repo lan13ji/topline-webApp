@@ -16,7 +16,7 @@ const router = new VueRouter({
     component: () => import('@/views/tabbar'),
     children: [{
       name: 'home',
-      path: '',
+      path: '', // 默认子路由
       component: () => import('@/views/home')
     }]
   }]
