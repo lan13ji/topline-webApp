@@ -10,7 +10,10 @@ import {
   CellGroup,
   Toast,
   Tabbar,
-  TabbarItem
+  TabbarItem,
+  Tab,
+  Tabs,
+  List
 } from 'vant'
 import './styles/index.less'
 
@@ -52,6 +55,9 @@ Vue
   .use(Toast)
   .use(Tabbar)
   .use(TabbarItem)
+  .use(Tab)
+  .use(Tabs)
+  .use(List)
 
 Vue.config.productionTip = false
 
