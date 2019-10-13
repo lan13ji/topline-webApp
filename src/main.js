@@ -2,7 +2,16 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Button, NavBar, Field, Cell, CellGroup, Toast } from 'vant'
+import {
+  Button,
+  NavBar,
+  Field,
+  Cell,
+  CellGroup,
+  Toast,
+  Tabbar,
+  TabbarItem
+} from 'vant'
 import './styles/index.less'
 
 // 表单验证
@@ -34,7 +43,15 @@ extend('phone', {
 })
 
 // 注册组件
-Vue.use(Button).use(NavBar).use(Field).use(Cell).use(CellGroup).use(Toast)
+Vue
+  .use(Button)
+  .use(NavBar)
+  .use(Field)
+  .use(Cell)
+  .use(CellGroup)
+  .use(Toast)
+  .use(Tabbar)
+  .use(TabbarItem)
 
 Vue.config.productionTip = false
 
