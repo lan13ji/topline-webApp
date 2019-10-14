@@ -64,27 +64,20 @@
       position="bottom"
       :style="{ height:'95%' }"
       closeable
-      close-icon-position="top-left">
-       <div class="channel-container">
-         <!-- 我的频道 -->
+      close-icon-position="top-left"
+    >
+      <div class="channel-container">
+        <!-- 我的频道 -->
         <van-cell title="我的频道" :border="false">
           <van-button type="danger" size="mini">编辑</van-button>
         </van-cell>
         <van-grid :gutter="10">
-          <van-grid-item
-            v-for="(channel,i) in channels"
-            :key="i"
-            :text="channel.name">
-          </van-grid-item>
+          <van-grid-item v-for="(channel,i) in channels" :key="i" :text="channel.name"></van-grid-item>
         </van-grid>
         <!-- 推荐频道 -->
         <van-cell title="推荐频道" :border="false"></van-cell>
         <van-grid :gutter="10">
-          <van-grid-item
-            v-for="value in 8"
-            :key="value"
-            text="文字">
-          </van-grid-item>
+          <van-grid-item v-for="(channel,index) in recommondChannels" :key="index" :text="channel.name"></van-grid-item>
         </van-grid>
       </div>
     </van-popup>
@@ -92,7 +85,7 @@
 </template>
 
 <script>
-import { getDefaultChannels } from '@/api/channels'
+import { getDefaultChannels, getAllChannels } from '@/api/channels'
 import { getArticles } from '@/api/articles'
 export default {
   name: 'HomeIndex',
@@ -100,12 +93,13 @@ export default {
     return {
       active: 0, // 当前激活的tab标签
       channels: [], // 频道列表
-      isChannelShow: false
+      isChannelShow: false,
+      allChannels: []
     }
   },
   methods: {
     // 我的频道列表
-    async loadChannels () {
+    async loadUserChannels () {
       const { data } = await getDefaultChannels()
       // 不同频道的内容数据
       const channels = data.data.channels
@@ -118,7 +112,7 @@ export default {
       })
       this.channels = channels
     },
-    // 异步更新数据
+    // 文章列表数据
     async onLoad () {
       // 当前频道对象
       const activeChannel = this.channels[this.active * 1]
@@ -165,7 +159,7 @@ export default {
         }
       }, 2000) */
     },
-    /* 下拉刷新 */
+    // 下拉刷新
     async onRefresh () {
       // 获取当前的频道对象
       const activeChannel = this.channels[this.active * 1]
@@ -185,10 +179,31 @@ export default {
 
       // 4.提示
       this.$toast('刷新成功')
+    },
+    // 获取所有频道列表
+    async loadAllChannels () {
+      const { data } = await getAllChannels()
+      this.allChannels = data.data.channels
+    }
+  },
+  computed: {
+    /**
+     * 获取推荐频道列表
+     */
+    recommondChannels () {
+      const recommondChannels = []
+      this.allChannels.forEach((channel) => {
+        // 判断 userChannels中 已有的channel,不存在 就是 推荐的
+        // find() ==true就停止遍历，==false就继续遍历。
+        // 如果遍历结束没有找到符合的条件元素就返回 undefined
+        !this.channels.find(item => item.id === channel.id) && recommondChannels.push(channel)
+      })
+      return recommondChannels
     }
   },
   created () {
-    this.loadChannels()
+    this.loadUserChannels()
+    this.loadAllChannels()
   }
 }
 </script>
@@ -236,7 +251,7 @@ export default {
     }
   }
 
-  .channel-container{
+  .channel-container {
     padding-top: 30px;
   }
 }
