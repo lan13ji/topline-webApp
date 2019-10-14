@@ -5,7 +5,7 @@
 
     <!-- 频道列表 -->
     <!-- active 控制当前激活的标签 -->
-    <van-tabs v-model="active">
+    <van-tabs v-model="active" animated swipeable>
       <van-tab
         v-for="channel in channels"
         :title="channel.name"
@@ -157,7 +157,7 @@ export default {
 }
 </script>
 
-<!-- 
+<!--
   使用 scoped 后，父组件的样式将不会渗透到子组件中
   不过一个子组件的根节点同时受其父组件的 scoped CSS 和 子组件的 scoped CSS 的影响
   这样设计是为了让父组可以从布局的角度出发，调整其子组件根元素的样式
