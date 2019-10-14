@@ -65,6 +65,18 @@
       :style="{ height:'95%' }"
       closeable
       close-icon-position="top-left">
+       <div class="channel-container">
+        <van-cell title="我的频道" :border="false">
+          <van-button type="danger" size="mini">编辑</van-button>
+        </van-cell>
+        <van-grid :gutter="10">
+          <van-grid-item
+            v-for="(channel,i) in channels"
+            :key="i"
+            :text="channel.name">
+          </van-grid-item>
+        </van-grid>
+      </div>
     </van-popup>
   </div>
 </template>
@@ -212,6 +224,10 @@ export default {
     .meta span {
       margin-right: 10px;
     }
+  }
+
+  .channel-container{
+    padding-top: 30px;
   }
 }
 </style>
