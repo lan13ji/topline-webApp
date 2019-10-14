@@ -66,6 +66,7 @@
       closeable
       close-icon-position="top-left">
        <div class="channel-container">
+         <!-- 我的频道 -->
         <van-cell title="我的频道" :border="false">
           <van-button type="danger" size="mini">编辑</van-button>
         </van-cell>
@@ -74,6 +75,15 @@
             v-for="(channel,i) in channels"
             :key="i"
             :text="channel.name">
+          </van-grid-item>
+        </van-grid>
+        <!-- 推荐频道 -->
+        <van-cell title="推荐频道" :border="false"></van-cell>
+        <van-grid :gutter="10">
+          <van-grid-item
+            v-for="value in 8"
+            :key="value"
+            text="文字">
           </van-grid-item>
         </van-grid>
       </div>
