@@ -19,23 +19,25 @@
 
           列表组件在初始化的时候自动触发 load 事件 调用 onLoad 方法
          -->
-        <van-list
-          v-model="channel.loading"
-          :finished="channel.finished"
-          finished-text="没有更多了"
-          @load="onLoad">
-          <!-- 列表内容 -->
-          <!--  -->
-          <!--
-            art_id超出js安全整数范围，被json-bigint转成对象了
-            但key只能是数字或字符串，所以要要把它转字符串
-          -->
-          <van-cell
-            v-for="article in channel.articles"
-            :key="article.art_id.toString()"
-            :title="article.title">
-          </van-cell>
-        </van-list>
+         <van-pull-refresh v-model="channel.isPullDownLoading" @refresh="onRefresh">
+          <van-list
+            v-model="channel.loading"
+            :finished="channel.finished"
+            finished-text="没有更多了"
+            @load="onLoad">
+            <!-- 列表内容 -->
+            <!--  -->
+            <!--
+              art_id超出js安全整数范围，被json-bigint转成对象了
+              但key只能是数字或字符串，所以要要把它转字符串
+            -->
+            <van-cell
+              v-for="article in channel.articles"
+              :key="article.art_id.toString()"
+              :title="article.title">
+            </van-cell>
+          </van-list>
+         </van-pull-refresh>
       </van-tab>
     </van-tabs>
     <!--  -->
@@ -64,6 +66,7 @@ export default {
         channel.loading = false // 频道的上拉加载更多的 loading 状态
         channel.finished = false // 频道的加载结束的状态
         channel.timestamp = null // 频道下一页的时间戳
+        channel.isPullDownLoading = false // 频道下拉刷新 loading 状态
       })
       this.channels = channels
     },
@@ -111,6 +114,27 @@ export default {
           activeChannel.finished = true
         }
       }, 2000) */
+    },
+    /* 下拉刷新 */
+    async onRefresh () {
+      // 获取当前的频道对象
+      const activeChannel = this.channels[this.active * 1]
+
+      // 1. 请求获取数据
+      const { data } = await getArticles({
+        channel_id: activeChannel.id, // 频道id
+        timestamp: Date.now(), // 下拉刷新永远都是获取最新的文章列表，所以传递当前最新的时间戳
+        with_top: 1
+      })
+
+      // 2.将数据添加到文章列表顶部
+      activeChannel.articles.unshift(...data.data.results)
+
+      // 3, 关闭下拉刷新的 loading 状态
+      activeChannel.isPullDownLoading = false
+
+      // 4.提示
+      this.$toast('刷新成功')
     }
   },
   created () {
