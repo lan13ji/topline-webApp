@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <!-- 导航栏 -->
-    <van-nav-bar title="首页"></van-nav-bar>
+    <van-nav-bar title="首页" fixed></van-nav-bar>
 
     <!-- 频道列表 -->
     <!-- active 控制当前激活的标签 -->
@@ -47,7 +47,6 @@
                     <span>{{ article.comm_count }}评论</span>
                     <span>{{ article.pubdate | relativeTime }}</span>
                   </div>
-
                 </div>
               </div>
             </van-cell>
@@ -158,14 +157,39 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.article-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+<!-- 
+  使用 scoped 后，父组件的样式将不会渗透到子组件中
+  不过一个子组件的根节点同时受其父组件的 scoped CSS 和 子组件的 scoped CSS 的影响
+  这样设计是为了让父组可以从布局的角度出发，调整其子组件根元素的样式
+  在有作用域的样式中，依然可以影响子组件的根元素
+-->
 
-  .meta span {
-    margin-right: 10px;
+<!--
+  没有作用域的时候，相当于全局样式
+-->
+
+<style lang="less" scoped>
+.home {
+  .van-tabs /deep/ .van-tabs__wrap--scrollable {
+    position: fixed;
+    top: 46px;
+    left: 0;
+    right: 16px;
+    z-index: 2;
+  }
+
+  .van-tabs /deep/ .van-tabs__content {
+    margin-top: 90px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .meta span {
+      margin-right: 10px;
+    }
   }
 }
 </style>
