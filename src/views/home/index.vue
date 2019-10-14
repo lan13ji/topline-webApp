@@ -35,6 +35,21 @@
               v-for="article in channel.articles"
               :key="article.art_id.toString()"
               :title="article.title">
+              <div slot="label">
+                <van-grid :border="false" :column-num="3">
+                  <van-grid-item v-for="(img, index) in article.cover.images" :key="index">
+                    <van-image lazy-load height="80" :src="img" />
+                  </van-grid-item>
+                </van-grid>
+                <div class="article-info">
+                  <div class="meta">
+                    <span>{{ article.aut_name }}</span>
+                    <span>{{ article.comm_count }}评论</span>
+                    <span>{{ article.pubdate }}</span>
+                  </div>
+
+                </div>
+              </div>
             </van-cell>
           </van-list>
          </van-pull-refresh>
@@ -144,5 +159,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.article-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
+  .meta span {
+    margin-right: 10px;
+  }
+}
 </style>
