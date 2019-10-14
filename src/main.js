@@ -19,7 +19,9 @@ import {
   Grid,
   GridItem,
   Image,
-  Lazyload
+  Lazyload,
+  Popup,
+  Icon
 } from 'vant'
 import './styles/index.less'
 
@@ -59,8 +61,7 @@ extend('phone', {
 })
 
 // 注册组件
-Vue
-  .use(Button)
+Vue.use(Button)
   .use(NavBar)
   .use(Field)
   .use(Cell)
@@ -76,6 +77,8 @@ Vue
   .use(GridItem)
   .use(Image)
   .use(Lazyload)
+  .use(Popup)
+  .use(Icon)
 
 Vue.config.productionTip = false
 

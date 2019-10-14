@@ -6,10 +6,11 @@
     <!-- 频道列表 -->
     <!-- active 控制当前激活的标签 -->
     <van-tabs v-model="active" animated swipeable>
-      <van-tab
-        v-for="channel in channels"
-        :title="channel.name"
-        :key="channel.id">
+      <!-- 面包按钮 -->
+      <div slot="nav-right" class="wap-nav" @click="isChannelShow=true">
+        <van-icon name="wap-nav" size="24"></van-icon>
+      </div>
+      <van-tab v-for="channel in channels" :title="channel.name" :key="channel.id">
         <!-- 文章列表 -->
         <!--
           loading 控制上拉加载更多的 loading 效果
@@ -18,13 +19,14 @@
           @load="onLoad" 上拉加载更多触发事件
 
           列表组件在初始化的时候自动触发 load 事件 调用 onLoad 方法
-         -->
-         <van-pull-refresh v-model="channel.isPullDownLoading" @refresh="onRefresh">
+        -->
+        <van-pull-refresh v-model="channel.isPullDownLoading" @refresh="onRefresh">
           <van-list
             v-model="channel.loading"
             :finished="channel.finished"
             finished-text="没有更多了"
-            @load="onLoad">
+            @load="onLoad"
+          >
             <!-- 列表内容 -->
             <!--  -->
             <!--
@@ -34,7 +36,8 @@
             <van-cell
               v-for="article in channel.articles"
               :key="article.art_id.toString()"
-              :title="article.title">
+              :title="article.title"
+            >
               <div slot="label">
                 <van-grid :border="false" :column-num="3">
                   <van-grid-item v-for="(img, index) in article.cover.images" :key="index">
@@ -51,11 +54,18 @@
               </div>
             </van-cell>
           </van-list>
-         </van-pull-refresh>
+        </van-pull-refresh>
       </van-tab>
     </van-tabs>
-    <!--  -->
-
+    <!-- 频道管理 -->
+    <van-popup
+      v-model="isChannelShow"
+      round
+      position="bottom"
+      :style="{ height:'95%' }"
+      closeable
+      close-icon-position="top-left">
+    </van-popup>
   </div>
 </template>
 
@@ -67,10 +77,12 @@ export default {
   data () {
     return {
       active: 0, // 当前激活的tab标签
-      channels: [] // 频道列表
+      channels: [], // 频道列表
+      isChannelShow: false
     }
   },
   methods: {
+    // 我的频道列表
     async loadChannels () {
       const { data } = await getDefaultChannels()
       // 不同频道的内容数据
@@ -100,7 +112,7 @@ export default {
       // 2. 将数据添加到当前频道 articles 中
       const { pre_timestamp: preTimestamp, results } = data.data
       // activeChannel.articles = activeChannel.articles.concat(data.data.resluts)
-      activeChannel.articles.push(...results)// ...["a","b","c"]展开运算符——es6
+      activeChannel.articles.push(...results) // ...["a","b","c"]展开运算符——es6
 
       // 3.结束当前频道 loading
       activeChannel.loading = false
@@ -108,7 +120,9 @@ export default {
       // 4.判断是否已全部加载结束，设置finished值
       // 有时间戳，获取下一个数据的页码时间戳
       // 没有，就数据获取结束
-      preTimestamp ? activeChannel.timestamp = preTimestamp : activeChannel.finished = true
+      preTimestamp
+        ? (activeChannel.timestamp = preTimestamp)
+        : (activeChannel.finished = true)
       // 1. 请求获取数据
       /* setTimeout(() => {
         for (let i = 0; i < 5; i++) {
@@ -182,6 +196,14 @@ export default {
     margin-top: 90px;
   }
 
+  .wap-nav {
+    position: sticky;
+    right: 0;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    opacity: 0.8;
+  }
   .article-info {
     display: flex;
     align-items: center;
