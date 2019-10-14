@@ -6,7 +6,10 @@
     <!-- 频道列表 -->
     <!-- active 控制当前激活的标签 -->
     <van-tabs v-model="active">
-      <van-tab v-for="channel in channels" :title="channel.name" :key="channel.id">
+      <van-tab
+        v-for="channel in channels"
+        :title="channel.name"
+        :key="channel.id">
         <!-- 文章列表 -->
         <!--
           loading 控制上拉加载更多的 loading 效果
@@ -16,8 +19,22 @@
 
           列表组件在初始化的时候自动触发 load 事件 调用 onLoad 方法
          -->
-        <van-list v-model="channel.loading" :finished="channel.finished" finished-text="没有更多了" @load="onLoad">
-          <van-cell v-for="item in channel.articles" :key="item" :title="item"></van-cell>
+        <van-list
+          v-model="channel.loading"
+          :finished="channel.finished"
+          finished-text="没有更多了"
+          @load="onLoad">
+          <!-- 列表内容 -->
+          <!--  -->
+          <!--
+            art_id超出js安全整数范围，被json-bigint转成对象了
+            但key只能是数字或字符串，所以要要把它转字符串
+          -->
+          <van-cell
+            v-for="article in channel.articles"
+            :key="article.art_id.toString()"
+            :title="article.title">
+          </van-cell>
         </van-list>
       </van-tab>
     </van-tabs>
@@ -28,6 +45,7 @@
 
 <script>
 import { getDefaultChannels } from '@/api/channels'
+import { getArticles } from '@/api/articles'
 export default {
   name: 'HomeIndex',
   data () {
@@ -45,32 +63,54 @@ export default {
         channel.articles = [] // 频道的文章列表
         channel.loading = false // 频道的上拉加载更多的 loading 状态
         channel.finished = false // 频道的加载结束的状态
+        channel.timestamp = null // 频道下一页的时间戳
       })
       this.channels = channels
     },
     // 异步更新数据
-    onLoad () {
-      // 当前频道
+    async onLoad () {
+      // 当前频道对象
       const activeChannel = this.channels[this.active * 1]
+
       // 1. 请求获取数据
-      setTimeout(() => {
+      const { data } = await getArticles({
+        channel_id: activeChannel.id, // 频道id
+        // 时间戳相当于当前频道下一页的页码
+        timestamp: activeChannel.timestamp || Date.now(), // 时间戳，请求新的推荐数据传当前的时间戳，请求历史推荐传指定的时间戳
+        with_top: 1 // 是否包含置顶，进入页面第一次请求时要包含置顶文章，1-包含置顶，0-不包含
+      })
+
+      // 2. 将数据添加到当前频道 articles 中
+      const { pre_timestamp: preTimestamp, results } = data.data
+      // activeChannel.articles = activeChannel.articles.concat(data.data.resluts)
+      activeChannel.articles.push(...results)// ...["a","b","c"]展开运算符——es6
+
+      // 3.结束当前频道 loading
+      activeChannel.loading = false
+
+      // 4.判断是否已全部加载结束，设置finished值
+      // 有时间戳，获取下一个数据的页码时间戳
+      // 没有，就数据获取结束
+      preTimestamp ? activeChannel.timestamp = preTimestamp : activeChannel.finished = true
+      // 1. 请求获取数据
+      /* setTimeout(() => {
         for (let i = 0; i < 5; i++) {
           // 2. 将数据添加到当前频道 articles 中
           activeChannel.articles.push(activeChannel.name + (activeChannel.articles.length + 1))
         }
         // 3.结束本次 loading
-        /**
-         * 设置本次加载状态结束
-         * 每次数据不满足一屏，它就继续onLoad
-         * 本次不终止，它就不会继续
-         **/
+        // *
+        //  * 设置本次加载状态结束
+        //  * 每次数据不满足一屏，它就继续onLoad
+        //  * 本次不终止，它就不会继续
+        //  *
         activeChannel.loading = false
 
         // 4.判断是否已全部加载结束，设置finished值
         if (activeChannel.articles.length >= 15) {
           activeChannel.finished = true
         }
-      }, 2000)
+      }, 2000) */
     }
   },
   created () {

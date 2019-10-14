@@ -65,20 +65,23 @@ export default {
         }) */
 
         // 先清除 loading
-        toast.clear()
+        // 如果之后有 success、fail 之类的提示，就不需要手动关闭 loading 了
+        // toast.clear()
+
+        const that = this
+        this.$toast.success({
+          duration: 500,
+          message: '登录成功',
+          onClose () {
+            // that.$router.push({ name: 'home' })
+          }
+        })
 
         // 登录成功，将token存储到vuex
         this.$store.commit('setUser', data.data)
 
         // 为了防止刷新token丢失，将token存储到本地存储
         setItem('user', data.data)
-
-        // 再提示登陆成功
-        /* this.$toast.success({
-          duration: 2000,
-          message: '登录成功'
-        }) */
-        this.$toast.success('登录成功')
       } catch (err) {
         // 所有大于等于 400 的状态码都会进入 catch
         if (err.response && err.response.status === 400) {
