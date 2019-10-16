@@ -77,7 +77,7 @@
             :key="i"
             :text="channel.name"
             @click="onChannelClick(i)">
-            <van-icon v-show="isEditShow" class="close-icon" slot="icon" name="close"></van-icon>
+            <van-icon v-if="i!=0" v-show="isEditShow" class="close-icon" slot="icon" name="close"></van-icon>
           </van-grid-item>
         </van-grid>
         <!-- 推荐频道 -->
@@ -121,13 +121,14 @@ export default {
       // 不同频道的内容数据
       // 如果 localChannels 返回 null 就从数据库 获取 data
       channels = localChannels || data.data.channels
-      channels.forEach(channel => {
+      this.extendData(channels)
+      /* channels.forEach(channel => {
         channel.articles = [] // 频道的文章列表
         channel.loading = false // 频道的上拉加载更多的 loading 状态
         channel.finished = false // 频道的加载结束的状态
         channel.timestamp = null // 频道下一页的时间戳
         channel.isPullDownLoading = false // 频道下拉刷新 loading 状态
-      })
+      }) */
       this.channels = channels
     },
     /**
@@ -207,7 +208,27 @@ export default {
      */
     async loadAllChannels () {
       const { data } = await getAllChannels()
-      this.allChannels = data.data.channels
+      const channels = data.data.channels
+      this.extendData(channels)
+      /* channels.forEach(channel => {
+        channel.articles = [] // 频道的文章列表
+        channel.loading = false // 频道的上拉加载更多的 loading 状态
+        channel.finished = false // 频道的加载结束的状态
+        channel.timestamp = null // 频道下一页的时间戳
+        channel.isPullDownLoading = false // 频道下拉刷新 loading 状态
+      }) */
+      this.allChannels = channels
+    },
+    // 频道
+    extendData (channels) {
+      channels.forEach(channel => {
+        channel.articles = [] // 频道的文章列表
+        channel.loading = false // 频道的上拉加载更多的 loading 状态
+        channel.finished = false // 频道的加载结束的状态
+        channel.timestamp = null // 频道下一页的时间戳
+        channel.isPullDownLoading = false // 频道下拉刷新 loading 状态
+      })
+      return channels
     },
     /*
      * 添加频道
@@ -222,7 +243,8 @@ export default {
     onChannelClick (i) {
       if (this.isEditShow) {
         // 如果是编辑状态，删除频道
-        this.channels.splice(i, 1)
+        // 推荐频道不删除
+        i !== 0 && this.channels.splice(i, 1)
       } else {
         // 如果是非编辑状态，切换频道，并且关闭频道弹窗
         this.active = i
