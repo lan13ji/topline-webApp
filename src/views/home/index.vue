@@ -69,10 +69,16 @@
       <div class="channel-container">
         <!-- 我的频道 -->
         <van-cell title="我的频道" :border="false">
-          <van-button type="danger" size="mini">编辑</van-button>
+          <van-button type="danger" size="mini" @click="isEditShow = !isEditShow">{{ isEditShow ? '完成' : '编辑' }}</van-button>
         </van-cell>
         <van-grid :gutter="10">
-          <van-grid-item v-for="(channel,i) in channels" :key="i" :text="channel.name"></van-grid-item>
+          <van-grid-item
+            v-for="(channel,i) in channels"
+            :key="i"
+            :text="channel.name"
+            @click="onChannelClick(i)">
+            <van-icon v-show="isEditShow" class="close-icon" slot="icon" name="close"></van-icon>
+          </van-grid-item>
         </van-grid>
         <!-- 推荐频道 -->
         <van-cell title="推荐频道" :border="false"></van-cell>
@@ -100,7 +106,8 @@ export default {
       active: 0, // 当前激活的tab标签
       channels: [], // 频道列表
       isChannelShow: false,
-      allChannels: []
+      allChannels: [],
+      isEditShow: false
     }
   },
   methods: {
@@ -208,6 +215,19 @@ export default {
     onAddChannel (channel) {
       // 将频道添加到我的频道中
       this.channels.push(channel)
+    },
+    /*
+     * 我的频道-编辑
+     */
+    onChannelClick (i) {
+      if (this.isEditShow) {
+        // 如果是编辑状态，删除频道
+        this.channels.splice(i, 1)
+      } else {
+        // 如果是非编辑状态，切换频道，并且关闭频道弹窗
+        this.active = i
+        this.isChannelShow = this.isEditShow
+      }
     }
   },
   computed: {
@@ -262,6 +282,12 @@ export default {
 
   .van-tabs /deep/ .van-tabs__content {
     margin-top: 90px;
+  }
+
+  .close-icon {
+    position: absolute;
+    top: -5px;
+    right: -5px;
   }
 
   .wap-nav {
