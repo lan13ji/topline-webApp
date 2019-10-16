@@ -69,7 +69,9 @@
       <div class="channel-container">
         <!-- 我的频道 -->
         <van-cell title="我的频道" :border="false">
-          <van-button type="danger" size="mini" @click="isEditShow = !isEditShow">{{ isEditShow ? '完成' : '编辑' }}</van-button>
+          <van-button type="danger" size="mini" @click="isEditShow = !isEditShow">
+            {{ isEditShow ? '完成' : '编辑' }}
+          </van-button>
         </van-cell>
         <van-grid :gutter="10">
           <van-grid-item
@@ -77,11 +79,11 @@
             :key="i"
             :text="channel.name"
             @click="onChannelClick(i)">
-            <van-icon v-if="i!=0" v-show="isEditShow" class="close-icon" slot="icon" name="close"></van-icon>
+            <van-icon v-if="i!=0" v-show="isEditShow" class="close-icon" slot="icon" name="close" />
           </van-grid-item>
         </van-grid>
         <!-- 推荐频道 -->
-        <van-cell title="推荐频道" :border="false"></van-cell>
+        <van-cell title="推荐频道" :border="false" />
         <van-grid :gutter="10">
           <van-grid-item
             v-for="(channel,index) in recommondChannels"
