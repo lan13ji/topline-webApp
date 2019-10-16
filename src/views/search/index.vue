@@ -6,9 +6,9 @@
     placeholder="请输入搜索关键词"
     show-action
     shape="round"
-    @search="onSearch"
+    @search="onSearch(searchText)"
     @input="onSearchInput">
-    <div slot="action" @click="onSearch">搜索</div>
+    <div slot="action" @click="onSearch(searchText)">搜索</div>
   </van-search>
 
   <!-- 联想建议 -->
@@ -16,8 +16,12 @@
     <van-cell
       v-for="(item,index) in searchSuggestions"
       :key="index"
-      icon="search">
-      <div v-html="item" slot="title"></div>
+      @click="onSearch(item)">
+      <!--
+        这里不能使用过滤器
+        因为过滤器只能用于 {{}} 、v-bind
+       -->
+      <div v-html="highlight(item)" slot="title"></div>
     </van-cell>
   </van-cell-group>
 </div>
@@ -34,8 +38,8 @@ export default {
     }
   },
   methods: {
-    onSearch () {
-      console.log('onSearch')
+    onSearch (item) {
+      this.$router.push('/search/' + item)
     },
     async onSearchInput () {
       // trim() 去掉首尾空格
@@ -44,13 +48,13 @@ export default {
       const { data } = await getSearchSugstions({
         q: this.searchText
       })
-      const searchSuggestions = data.data.options
-      // 根据 关键词 创建 正则表达式
-      const reg = new RegExp(searchText, 'g')
-      searchSuggestions.forEach((item, index) => {
-        searchSuggestions[index] = item.replace(reg, `<span style="color: red">${searchText}</span>`)
-      })
       this.searchSuggestions = data.data.options
+    },
+    // 搜索关键词 高亮
+    highlight (item) {
+      // 根据 关键词 创建 正则表达式
+      const reg = new RegExp(this.searchText, 'g')
+      return item.replace(reg, `<span style="color: red">${this.searchText}</span>`)
     }
   }
 }
