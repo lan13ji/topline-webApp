@@ -14,9 +14,10 @@
   <van-cell-group>
     <van-cell
       v-for="(item,index) in searchSuggestions"
-      :title="item"
       :key="index"
-      icon="search" />
+      icon="search">
+      <div v-html="item" slot="title"></div>
+    </van-cell>
   </van-cell-group>
 </div>
 </template>
@@ -40,6 +41,12 @@ export default {
       if (!searchText) return
       const { data } = await getSearchSugstions({
         q: this.searchText
+      })
+      const searchSuggestions = data.data.options
+      // 根据字符串常见正则表达式
+      const reg = new RegExp(searchText, 'g')
+      searchSuggestions.forEach((item, index) => {
+        searchSuggestions[index] = item.replace(reg, `<span style="color: red">${searchText}</span>`)
       })
       this.searchSuggestions = data.data.options
     }
