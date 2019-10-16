@@ -77,7 +77,12 @@
         <!-- 推荐频道 -->
         <van-cell title="推荐频道" :border="false"></van-cell>
         <van-grid :gutter="10">
-          <van-grid-item v-for="(channel,index) in recommondChannels" :key="index" :text="channel.name"></van-grid-item>
+          <van-grid-item
+            v-for="(channel,index) in recommondChannels"
+            :key="index"
+            :text="channel.name"
+            @click="onAddChannel(channel)"
+          ></van-grid-item>
         </van-grid>
       </div>
     </van-popup>
@@ -87,6 +92,7 @@
 <script>
 import { getDefaultChannels, getAllChannels } from '@/api/channels'
 import { getArticles } from '@/api/articles'
+import { setItem, getItem } from '@/utils/storage'
 export default {
   name: 'HomeIndex',
   data () {
@@ -98,11 +104,16 @@ export default {
     }
   },
   methods: {
-    // 我的频道列表
+    /**
+     * 获取我的频道列表
+     */
     async loadUserChannels () {
+      let channels = []
       const { data } = await getDefaultChannels()
+      const localChannels = getItem('channels')
       // 不同频道的内容数据
-      const channels = data.data.channels
+      // 如果 localChannels 返回 null 就从数据库 获取 data
+      channels = localChannels || data.data.channels
       channels.forEach(channel => {
         channel.articles = [] // 频道的文章列表
         channel.loading = false // 频道的上拉加载更多的 loading 状态
@@ -112,7 +123,9 @@ export default {
       })
       this.channels = channels
     },
-    // 文章列表数据
+    /**
+     * 文章列表数据
+     */
     async onLoad () {
       // 当前频道对象
       const activeChannel = this.channels[this.active * 1]
@@ -141,25 +154,27 @@ export default {
         : (activeChannel.finished = true)
       // 1. 请求获取数据
       /* setTimeout(() => {
-        for (let i = 0; i < 5; i++) {
-          // 2. 将数据添加到当前频道 articles 中
-          activeChannel.articles.push(activeChannel.name + (activeChannel.articles.length + 1))
-        }
-        // 3.结束本次 loading
-        // *
-        //  * 设置本次加载状态结束
-        //  * 每次数据不满足一屏，它就继续onLoad
-        //  * 本次不终止，它就不会继续
-        //  *
-        activeChannel.loading = false
+          for (let i = 0; i < 5; i++) {
+            // 2. 将数据添加到当前频道 articles 中
+            activeChannel.articles.push(activeChannel.name + (activeChannel.articles.length + 1))
+          }
+          // 3.结束本次 loading
+          // *
+          //  * 设置本次加载状态结束
+          //  * 每次数据不满足一屏，它就继续onLoad
+          //  * 本次不终止，它就不会继续
+          //  *
+          activeChannel.loading = false
 
-        // 4.判断是否已全部加载结束，设置finished值
-        if (activeChannel.articles.length >= 15) {
-          activeChannel.finished = true
-        }
-      }, 2000) */
+          // 4.判断是否已全部加载结束，设置finished值
+          if (activeChannel.articles.length >= 15) {
+            activeChannel.finished = true
+          }
+        }, 2000) */
     },
-    // 下拉刷新
+    /**
+     * 下拉刷新
+     */
     async onRefresh () {
       // 获取当前的频道对象
       const activeChannel = this.channels[this.active * 1]
@@ -180,25 +195,41 @@ export default {
       // 4.提示
       this.$toast('刷新成功')
     },
-    // 获取所有频道列表
+    /**
+     * 获取所有频道列表
+     */
     async loadAllChannels () {
       const { data } = await getAllChannels()
       this.allChannels = data.data.channels
+    },
+    /*
+     * 添加频道
+     */
+    onAddChannel (channel) {
+      // 将频道添加到我的频道中
+      this.channels.push(channel)
     }
   },
   computed: {
-    /**
+    /*
      * 获取推荐频道列表
      */
     recommondChannels () {
-      const recommondChannels = []
-      this.allChannels.forEach((channel) => {
+      const arr = []
+      this.allChannels.forEach(channel => {
         // 判断 userChannels中 已有的channel,不存在 就是 推荐的
         // find() ==true就停止遍历，==false就继续遍历。
         // 如果遍历结束没有找到符合的条件元素就返回 undefined
-        !this.channels.find(item => item.id === channel.id) && recommondChannels.push(channel)
+        !this.channels.find(item => item.id === channel.id) && arr.push(channel)
       })
-      return recommondChannels
+      return arr
+    }
+  },
+  watch: {
+    // 函数名就是要监视的数据成员名称
+    channels (newVal) {
+      // console.log(newVal)
+      setItem('channels', newVal)
     }
   },
   created () {
@@ -241,6 +272,7 @@ export default {
     background-color: #fff;
     opacity: 0.8;
   }
+
   .article-info {
     display: flex;
     align-items: center;
