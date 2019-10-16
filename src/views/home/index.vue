@@ -1,7 +1,11 @@
 <template>
   <div class="home">
     <!-- 导航栏 -->
-    <van-nav-bar title="首页" fixed></van-nav-bar>
+    <!-- <van-nav-bar title="首页" fixed></van-nav-bar> -->
+    <!-- 自定义首页导航栏 -->
+    <van-nav-bar fixed>
+      <van-button class="search-btn" slot="title" round type="info" size="small" @click="$router.push('/search')">搜索</van-button>
+    </van-nav-bar>
 
     <!-- 频道列表 -->
     <!-- active 控制当前激活的标签 -->
@@ -28,7 +32,6 @@
             @load="onLoad"
           >
             <!-- 列表内容 -->
-            <!--  -->
             <!--
               art_id超出js安全整数范围，被json-bigint转成对象了
               但key只能是数字或字符串，所以要要把它转字符串
@@ -312,6 +315,11 @@ export default {
     position: absolute;
     top: -5px;
     right: -5px;
+  }
+
+  .search-btn {
+    width: 100%;
+    background: #5babfb;
   }
 
   .wap-nav {
