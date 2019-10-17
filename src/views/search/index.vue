@@ -27,9 +27,9 @@
   <!-- 搜索历史记录 -->
   <van-cell-group>
     <van-cell title="历史记录">
-      <template v-if="isDelShow">
+      <template v-if="isDelShow && this.searchHistories.length > 0">
         <span @click="delHistory('全部')">全部删除</span>
-        <!-- &emsp;<span @click="isDelShow = false">完成</span> -->
+        &emsp;<span @click="isDelShow = !isDelShow">完成</span>
       </template>
       <van-icon name="delete" class="icon-del" @click="isDelShow = !isDelShow"></van-icon>
     </van-cell>
@@ -60,6 +60,8 @@ export default {
   },
   methods: {
     onSearch (item) {
+      const txt = item.trim()
+      if (!txt) return
       // 存储搜索历史记录
       const index = this.searchHistories.indexOf(item)
       // 如果搜索历史记录已经存在，将其移除，重新存储在数组的顶部
