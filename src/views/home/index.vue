@@ -40,6 +40,7 @@
               v-for="article in channel.articles"
               :key="article.art_id.toString()"
               :title="article.title"
+              @click="articleDetail(article.art_id)"
             >
               <div slot="label">
                 <van-grid :border="false" :column-num="3">
@@ -255,6 +256,16 @@ export default {
         this.active = i
         this.isChannelShow = this.isEditShow
       }
+    },
+    /* 文章详情 */
+    articleDetail (articleId) {
+      articleId = articleId.toString()
+      this.$router.push({
+        name: 'article',
+        params: {
+          articleId
+        }
+      })
     }
   },
   computed: {
