@@ -12,7 +12,7 @@
   </van-search>
 
   <!-- 联想建议 -->
-  <van-cell-group>
+  <van-cell-group v-if="searchText">
     <van-cell
       v-for="(item,index) in searchSuggestions"
       :key="index"
@@ -25,7 +25,7 @@
     </van-cell>
   </van-cell-group>
   <!-- 搜索历史记录 -->
-  <van-cell-group>
+  <van-cell-group v-else>
     <van-cell title="历史记录">
       <template v-if="isDelShow && this.searchHistories.length > 0">
         <span @click="delHistory('全部')">全部删除</span>
