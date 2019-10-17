@@ -13,16 +13,21 @@
 
     <!-- 文章详情 -->
     <div class="detail">
-      <h3 class="title"></h3>
+      <h3 class="title">{{ article.title }}</h3>
       <div class="author">
-        <van-image round width="2rem" height="2rem" fit="fill" src=""></van-image>
+        <van-image
+          round
+          width="2rem"
+          height="2rem"
+          fit="fill"
+          :src="article.aut_photo" />
         <div class="text">
-          <p class="name"></p>
-          <p class="time"></p>
+          <p class="name">{{ article.aut_name }}</p>
+          <p class="time">{{ article.pubdate }}</p>
         </div>
         <van-button round size="small" type="info">+ 关注</van-button>
       </div>
-      <div class="content"></div>
+      <div class="content" v-html="article.content"></div>
       <div class="zan">
         <!--
           round: 圆形按钮
@@ -58,8 +63,31 @@
 </template>
 
 <script>
+import { getDetail } from '@/api/articles'
 export default {
-  name: 'ArticleIndex'
+  name: 'ArticleIndex',
+  data () {
+    return {
+      article: {}
+    }
+  },
+  methods: {
+    async loadArticle () {
+      const articleId = this.$route.params.articleId
+      const { data } = await getDetail(articleId)
+      /**
+       * title: '' // 文章标题
+       * contned: '' // 文章内容
+       * aut_name: '' // 作者名
+       * aut_photo: '' // 作者头像url 默认为null
+       * pubdate: ' // 发布日期
+       */
+      this.article = data.data
+    }
+  },
+  created () {
+    this.loadArticle()
+  }
 }
 </script>
 

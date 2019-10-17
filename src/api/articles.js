@@ -11,3 +11,11 @@ export function getArticles (params) {
     params
   })
 }
+
+// 获取文章详情
+export function getDetail (articleId) {
+  return request({
+    method: 'GET',
+    url: `/app/v1_0/articles/${articleId}`
+  })
+}
