@@ -48,6 +48,7 @@
 import { getSearchSugstions } from '@/api/search'
 import { getItem, setItem } from '@/utils/storage'
 import { Dialog } from 'vant'
+import { debounce } from 'lodash'
 export default {
   name: 'SearchIndex',
   data () {
@@ -72,7 +73,8 @@ export default {
       // 跳转到搜索结果页面
       this.$router.push('/search/' + item)
     },
-    async onSearchInput () {
+    // async onSearchInput () {
+    onSearchInput: debounce(async function () {
       // trim() 去掉首尾空格
       const searchText = this.searchText.trim()
       if (!searchText) return
@@ -80,7 +82,7 @@ export default {
         q: this.searchText
       })
       this.searchSuggestions = data.data.options
-    },
+    }, 300),
     // 搜索关键词 高亮
     highlight (item) {
       // 根据 关键词 创建 正则表达式
