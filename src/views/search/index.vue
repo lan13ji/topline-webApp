@@ -30,7 +30,11 @@
       <span>全部删除</span>&emsp;<span>完成</span>
       <van-icon name="delete" class="icon-del"></van-icon>
     </van-cell>
-    <van-cell title="单元格">
+    <van-cell
+      v-for="( item, i ) in searchHistories"
+      :title="item"
+      :key="i"
+      @click="onSearch(item)">
       <van-icon name="close"></van-icon>
     </van-cell>
   </van-cell-group>
@@ -46,7 +50,7 @@ export default {
     return {
       searchText: '',
       searchSuggestions: [], // 联想建议列表
-      searchHistories: [] // 搜索历史记录
+      searchHistories: getItem('search-histories') || [] // 搜索历史记录
     }
   },
   methods: {
