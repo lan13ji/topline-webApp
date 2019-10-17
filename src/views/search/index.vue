@@ -27,15 +27,18 @@
   <!-- 搜索历史记录 -->
   <van-cell-group>
     <van-cell title="历史记录">
-      <span>全部删除</span>&emsp;<span>完成</span>
-      <van-icon name="delete" class="icon-del"></van-icon>
+      <template v-if="isDelShow">
+        <span @click="delHistory('全部')">全部删除</span>
+        <!-- &emsp;<span @click="isDelShow = false">完成</span> -->
+      </template>
+      <van-icon name="delete" class="icon-del" @click="isDelShow = !isDelShow"></van-icon>
     </van-cell>
     <van-cell
       v-for="( item, i ) in searchHistories"
       :title="item"
       :key="i"
       @click="onSearch(item)">
-      <van-icon name="close"></van-icon>
+      <van-icon name="close" v-show="isDelShow" @click.stop="delHistory('该条',i)"></van-icon>
     </van-cell>
   </van-cell-group>
 </div>
@@ -44,13 +47,15 @@
 <script>
 import { getSearchSugstions } from '@/api/search'
 import { getItem, setItem } from '@/utils/storage'
+import { Dialog } from 'vant'
 export default {
   name: 'SearchIndex',
   data () {
     return {
       searchText: '',
       searchSuggestions: [], // 联想建议列表
-      searchHistories: getItem('search-histories') || [] // 搜索历史记录
+      searchHistories: getItem('search-histories') || [], // 搜索历史记录
+      isDelShow: false // 控制删除显示状态
     }
   },
   methods: {
@@ -79,6 +84,19 @@ export default {
       // 根据 关键词 创建 正则表达式
       const reg = new RegExp(this.searchText, 'g')
       return item.replace(reg, `<span style="color: red">${this.searchText}</span>`)
+    },
+    // 历史记录删除
+    delHistory (txt, i) {
+      Dialog.confirm({
+        message: `确认${txt}删除记录吗？`
+      }).then(() => {
+        i === undefined ? this.searchHistories = [] : this.searchHistories.splice(i, 1)
+      }).catch(() => {})
+    }
+  },
+  watch: {
+    searchHistories (newVal) {
+      setItem('search-histories', newVal)
     }
   }
 }

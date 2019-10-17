@@ -26,7 +26,7 @@ export default {
       // 页数，不传默认为1
       // 每页数量，不传每页数量由后端决定
       params: {
-        page: 900,
+        page: 1,
         perPage: 10,
         q: this.$route.params.q
       }
@@ -36,10 +36,9 @@ export default {
     async onLoad () {
       // 1. 请求获取数据
       const { data } = await getSearchResult(this.params)
-      // console.log(data.data)
+
       // 2. 将数据添加到数组中
       this.list.push(...data.data.results)
-
       // 3. 结束 loading
       this.loading = false
 

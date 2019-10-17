@@ -22,7 +22,8 @@ import {
   Lazyload,
   Popup,
   Icon,
-  Search
+  Search,
+  Dialog
 } from 'vant'
 import './styles/index.less'
 
@@ -81,6 +82,7 @@ Vue.use(Button)
   .use(Popup)
   .use(Icon)
   .use(Search)
+  .use(Dialog)
 
 Vue.config.productionTip = false
 
