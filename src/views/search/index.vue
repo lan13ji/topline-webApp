@@ -39,16 +39,26 @@
 
 <script>
 import { getSearchSugstions } from '@/api/search'
+import { getItem, setItem } from '@/utils/storage'
 export default {
   name: 'SearchIndex',
   data () {
     return {
       searchText: '',
-      searchSuggestions: [] // 联想建议列表
+      searchSuggestions: [], // 联想建议列表
+      searchHistories: [] // 搜索历史记录
     }
   },
   methods: {
     onSearch (item) {
+      // 存储搜索历史记录
+      const index = this.searchHistories.indexOf(item)
+      // 如果搜索历史记录已经存在，将其移除，重新存储在数组的顶部
+      index !== -1 && this.searchHistories.splice(index, 1)
+      this.searchHistories.unshift(item)
+      // 将历史记录存入本地存储
+      setItem('search-histories', this.searchHistories)
+      // 跳转到搜索结果页面
       this.$router.push('/search/' + item)
     },
     async onSearchInput () {
