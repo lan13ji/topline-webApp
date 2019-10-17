@@ -23,7 +23,8 @@ import {
   Popup,
   Icon,
   Search,
-  Dialog
+  Dialog,
+  Loading
 } from 'vant'
 import './styles/index.less'
 
@@ -83,6 +84,7 @@ Vue.use(Button)
   .use(Icon)
   .use(Search)
   .use(Dialog)
+  .use(Loading)
 
 Vue.config.productionTip = false
 
