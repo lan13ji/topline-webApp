@@ -51,6 +51,10 @@ export default {
 
 <style lang="less" scoped>
 .search-result {
+  .van-icon {
+    color: #fff
+  }
+
   .articles-list {
     margin-top: 46px;
   }
