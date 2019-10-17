@@ -24,6 +24,16 @@
       <div v-html="highlight(item)" slot="title"></div>
     </van-cell>
   </van-cell-group>
+  <!-- 搜索历史记录 -->
+  <van-cell-group>
+    <van-cell title="历史记录">
+      <span>全部删除</span>&emsp;<span>完成</span>
+      <van-icon name="delete" class="icon-del"></van-icon>
+    </van-cell>
+    <van-cell title="单元格">
+      <van-icon name="close"></van-icon>
+    </van-cell>
+  </van-cell-group>
 </div>
 </template>
 
@@ -60,6 +70,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+.icon-del{
+  margin-left: 10px;
+  vertical-align: middle
+}
 </style>
