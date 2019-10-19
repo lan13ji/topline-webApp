@@ -22,8 +22,6 @@ export function getDetail (articleId) {
 
 // 点赞
 export const likeArticle = articleId => {
-  console.log('点赞')
-
   return request({
     method: 'POST',
     url: '/app/v1_0/article/likings',
@@ -35,27 +33,27 @@ export const likeArticle = articleId => {
 
 // 取消点赞
 export const unLikeArticle = articleId => {
-  console.log('取消点赞')
   return request({
     method: 'DELETE',
     url: `/app/v1_0/article/likings/${articleId}`
   })
 }
 
-/*
- export function likeArticle (articleId) {
+// 不喜欢
+export function disLikeArticle (articleId) {
   return request({
     method: 'POST',
-    url: '/app/v1_0/article/likings',
+    url: '/app/v1_0/article/dislikes',
     data: {
       target: articleId
     }
   })
 }
-export unLikeArticle (articleId) {
+
+// 取消不喜欢
+export function delDisLikeArticle (articleId) {
   return request({
     method: 'DELETE',
-    url: `/app/v1_0/article/likings/${articleId}`
+    url: `/app/v1_0/article/dislikes/${articleId}`
   })
 }
- */

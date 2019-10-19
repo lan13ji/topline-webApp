@@ -34,11 +34,20 @@
           hairline
           plain
           size="small"
-          :type="likeDom.likeType"
-          :icon="likeDom.likeIcon"
+          :type="this.article.attitude===1 ? 'primary' : 'default'"
+          :icon="this.article.attitude===1 ? 'good-job' : 'good-job-o'"
           @click="onLike"
-        >{{likeDom.likeTxt}}</van-button>&emsp;
-        <van-button round hairline plain size="small" type="danger" icon="delete">不喜欢</van-button>
+        >{{this.article.attitude===1 ? '取消点赞' : '点赞'}}</van-button>&emsp;
+
+        <van-button
+          round
+          hairline
+          plain
+          size="small"
+          :type="this.article.attitude===0 ? 'danger' : 'default'"
+          icon="delete"
+          @click="onDislike"
+        >{{this.article.attitude===0 ? '取消不喜欢' : '不喜欢'}}</van-button>
       </div>
     </div>
     <!-- 加载失败的消息提示 -->
@@ -49,14 +58,19 @@
 </template>
 
 <script>
-import { getDetail, unLikeArticle, likeArticle } from '@/api/articles'
+import {
+  getDetail,
+  unLikeArticle,
+  likeArticle,
+  disLikeArticle,
+  delDisLikeArticle
+} from '@/api/articles'
 import { followUser, unFollowUser } from '@/api/user'
 export default {
   name: 'ArticleIndex',
   data () {
     return {
       article: {}, // 文章详情
-      likeDom: {},
       loading: true // 控制加载中的 loading 状态
     }
   },
@@ -81,7 +95,6 @@ export default {
          * recomments: [] // 相关文章推荐，无推荐为空数组
          */
         this.article = data.data
-        this.setLike(this.article.attitude === 1)
       } catch (err) {
         console.log(err)
       }
@@ -103,23 +116,27 @@ export default {
     async onLike () {
       const articleId = this.article.art_id.toString()
       const { attitude } = this.article
-      // (-1 无态度，0 不喜欢，1 点赞)
+      // (-1 无态度，1 点赞)
       if (attitude === 1) {
-        console.log(attitude, '取消点赞')
         await unLikeArticle(articleId)
+        this.article.attitude = -1
       } else {
-        console.log(attitude, '点赞')
         await likeArticle(articleId)
+        this.article.attitude = 1
       }
-      this.article.attitude = -attitude
-      this.setLike(attitude !== 1)
     },
-    // 设置点赞Dom
-    setLike (flag) {
-      this.likeDom = {
-        likeType: flag ? 'default' : 'primary',
-        likeIcon: flag ? 'good-job' : 'good-job-o',
-        likeTxt: flag ? '取消点赞' : '点赞'
+
+    // 不喜欢功能
+    async onDislike () {
+      const articleId = this.article.art_id.toString()
+      const { attitude } = this.article
+      // (-1 无态度，0 不喜欢)
+      if (attitude === 0) {
+        await delDisLikeArticle(articleId)
+        this.article.attitude = -1
+      } else {
+        await disLikeArticle(articleId)
+        this.article.attitude = 0
       }
     }
   },
