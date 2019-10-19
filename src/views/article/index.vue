@@ -54,6 +54,8 @@
     <div class="error" v-else>
       <p>网络超时，点击<a href="#">刷新</a>试一试</p>
     </div>
+    <!-- 文章评论 -->
+    <article-comment />
   </div>
 </template>
 
@@ -66,6 +68,7 @@ import {
   delDisLikeArticle
 } from '@/api/articles'
 import { followUser, unFollowUser } from '@/api/user'
+import ArticleComment from './components/article-comment'
 export default {
   name: 'ArticleIndex',
   data () {
@@ -73,6 +76,9 @@ export default {
       article: {}, // 文章详情
       loading: true // 控制加载中的 loading 状态
     }
+  },
+  components: {
+    ArticleComment
   },
   methods: {
     async loadArticle () {
