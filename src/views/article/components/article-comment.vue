@@ -1,15 +1,22 @@
 <template>
   <div class="article-comments">
     <!-- 评论列表 -->
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell v-for="item in list" :key="item" :title="item">
-        <van-image slot="icon" round width="30" height="30" src="" />
-        <span slot="title">hello</span>
+   <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-cell v-for="comment in list" :key="comment.com_id.toString()">
+        <van-image
+          slot="icon"
+          round
+          width="30"
+          height="30"
+          :src="comment.aut_photo"
+          style="margin-right: 10px"
+        />
+        <span style="color: #466b9d" slot="title">{{ comment.aut_name }}</span>
         <div slot="label">
-          <p>你好，我是Zenobia</p>
+          <p style="color: #363636">{{ comment.content }}</p>
           <p>
-            <span>3天前</span>
-            <van-button size="mini" type="default">回复</van-button>
+            <span style="margin-right: 10px;">{{ comment.pubdate | relativeTime }}</span>
+            <van-button size="mini" type="default">回复 {{ comment.reply_count}}</van-button>
           </p>
         </div>
         <van-icon slot="right-icon" name="like-o"></van-icon>
@@ -34,7 +41,7 @@ export default {
       list: [], // 评论列表
       loading: false, // 上拉加载更多的loading
       finished: false, // 是否加载结束
-      offset: null
+      offset: null // 获取下一页数据的页码
     }
   },
   methods: {
@@ -52,7 +59,32 @@ export default {
         offset: this.offset
       })
       const { results } = data.data
-      console.log(results)
+      /**
+       * com_id: '' // 评论或回复id
+       * aut_id: '' // 评论或回复的用户id
+       * aut_name: '' // 用户名称
+       * aut_photo: '' // 用户头像url
+       * like_count: '' // 点赞数量
+       * reply_count: '' // 回复数量
+       * pubdate:'' // 创建时间
+       * content:'' // 评论或回复内容
+       * is_top:'' // 是否置顶，0-不置顶，1-置顶
+       * is_liking: false //当前用户是否点赞
+       */
+      // 2.将数据添加到数组中
+      this.list.push(...results)
+
+      // 3.结束loading
+      this.loading = false
+
+      // 4.判断是否加载结束
+      if (results.length) {
+        // 如果还有数据，则更新获取下一页数据的页码(offset)
+        this.offset = data.data.last_id
+      } else {
+        // 如果没有，finished = true
+        this.finished = true
+      }
     }
   }
 }
