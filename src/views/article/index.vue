@@ -10,19 +10,17 @@
     <div class="detail" v-else-if="article.title">
       <h3 class="title">{{ article.title }}</h3>
       <div class="author">
-        <van-image
-          round
-          width="2rem"
-          height="2rem"
-          fit="fill"
-          :src="article.aut_photo" />
+        <van-image round width="2rem" height="2rem" fit="fill" :src="article.aut_photo" />
         <div class="text">
           <p class="name">{{ article.aut_name }}</p>
           <p class="time">{{ article.pubdate }}</p>
         </div>
-        <van-button round size="small" type="info" @click="onFollow">
-          {{ article.is_followed ? '取消关注 ': '+ 关注' }}
-        </van-button>
+        <van-button
+          round
+          size="small"
+          type="info"
+          @click="onFollow"
+        >{{ article.is_followed ? '取消关注 ': '+ 关注' }}</van-button>
       </div>
       <div class="content" v-html="article.content"></div>
       <div class="zan">
@@ -30,25 +28,28 @@
           round: 圆形按钮
           hairline: 0.5px细边框
           plain: 朴素按钮-文字为按钮颜色
-         -->
-        <van-button round hairline plain size="small" type="primary" icon="good-job-o">
-          点赞
-        </van-button>
-        &emsp;
-        <van-button round hairline plain size="small" type="danger" icon="delete">
-          不喜欢
-        </van-button>
+        -->
+        <van-button
+          round
+          hairline
+          plain
+          size="small"
+          type="primary"
+          :icon="article.attitude === 1 ? 'good-job' : 'good-job-o'"
+          @click="onLike"
+        >{{article.attitude === 1 ? "取消点赞" : "点赞"}}</van-button>&emsp;
+        <van-button round hairline plain size="small" type="danger" icon="delete">不喜欢</van-button>
       </div>
     </div>
     <!-- 加载失败的消息提示 -->
     <div class="error" v-else>
-      <p>网络超时，点击 <a href="#">刷新</a>试一试</p>
+      <p>网络超时，点击<a href="#">刷新</a>试一试</p>
     </div>
   </div>
 </template>
 
 <script>
-import { getDetail } from '@/api/articles'
+import { getDetail, unLike, addLike } from '@/api/articles'
 import { followUser, unFollowUser } from '@/api/user'
 export default {
   name: 'ArticleIndex',
@@ -85,6 +86,8 @@ export default {
       // 无论加载成功还是失败，loading都要结束
       this.loading = false
     },
+
+    // 关注功能
     async onFollow () {
       if (this.article.is_followed) {
         await unFollowUser(this.article.aut_id)
@@ -92,6 +95,20 @@ export default {
         await followUser(this.article.aut_id)
       }
       this.article.is_followed = !this.article.is_followed
+    },
+
+    // 点赞功能
+    async onLike () {
+      const articleId = this.article.art_id.toString()
+      const i = this.article.attitude
+      // (-1 无态度，0 不喜欢，1 点赞)
+      if (i === 1) {
+        this.article.attitude = -1
+        await unLike(articleId)
+      } else {
+        this.article.attitude = 1
+        await addLike(articleId)
+      }
     }
   },
   created () {
@@ -114,8 +131,7 @@ export default {
   }*/
 
   .article-loading,
-  .error
-  {
+  .error {
     padding-top: 100px;
     text-align: center;
   }
@@ -128,7 +144,7 @@ export default {
     }
 
     .zan {
-      text-align: center
+      text-align: center;
     }
 
     .author {
@@ -140,7 +156,7 @@ export default {
         padding-left: 10px;
         line-height: 1.3;
 
-        .name{
+        .name {
           font-size: 14px;
           margin: 0;
         }
@@ -148,7 +164,7 @@ export default {
         .time {
           margin: 0;
           font-size: 12px;
-          color: #999
+          color: #999;
         }
       }
     }
@@ -159,7 +175,7 @@ export default {
       word-break: break-all;
       /deep/ img {
         max-width: 100%;
-        background: #f9f9f9
+        background: #f9f9f9;
       }
     }
   }

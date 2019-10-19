@@ -19,3 +19,21 @@ export function getDetail (articleId) {
     url: `/app/v1_0/articles/${articleId}`
   })
 }
+
+// 点赞
+export function addLike (articleID) {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/article/likings',
+    data: {
+      target: articleID
+    }
+  })
+}
+// 取消点赞
+export function unLike (articleID) {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/article/likings/${articleID}`
+  })
+}
