@@ -20,7 +20,9 @@
           <p class="name">{{ article.aut_name }}</p>
           <p class="time">{{ article.pubdate }}</p>
         </div>
-        <van-button round size="small" type="info">+ 关注</van-button>
+        <van-button round size="small" type="info" @click="onFollow">
+          {{ article.is_followed ? '取消关注 ': '+ 关注' }}
+        </van-button>
       </div>
       <div class="content" v-html="article.content"></div>
       <div class="zan">
@@ -47,6 +49,7 @@
 
 <script>
 import { getDetail } from '@/api/articles'
+import { followUser, unFollowUser } from '@/api/user'
 export default {
   name: 'ArticleIndex',
   data () {
@@ -63,11 +66,17 @@ export default {
         const articleId = this.$route.params.articleId
         const { data } = await getDetail(articleId)
         /**
+         * art_id: '' //文章ID
          * title: '' // 文章标题
-         * contned: '' // 文章内容
+         * pubdate: ' // 发布日期
+         * attitude: '' // 对文章的态度(-1 无态度，0 不喜欢，1 点赞)
+         * is_collected: false // 是否收藏了文章
+         * content: '' // 文章内容
+         * aut_id: '' // 作者ID
          * aut_name: '' // 作者名
          * aut_photo: '' // 作者头像url 默认为null
-         * pubdate: ' // 发布日期
+         * is_fllowed: false // 是否关注了作者
+         * recomments: [] // 相关文章推荐，无推荐为空数组
          */
         this.article = data.data
       } catch (err) {
@@ -75,6 +84,14 @@ export default {
       }
       // 无论加载成功还是失败，loading都要结束
       this.loading = false
+    },
+    async onFollow () {
+      if (this.article.is_followed) {
+        await unFollowUser(this.article.aut_id)
+      } else {
+        await followUser(this.article.aut_id)
+      }
+      this.article.is_followed = !this.article.is_followed
     }
   },
   created () {
@@ -92,9 +109,9 @@ export default {
   width: 100%;
   height: 100%;
 
-  .van-icon {
-    color: #fff
-  }
+  /*.van-icon {
+     color: #fff
+  }*/
 
   .article-loading,
   .error
