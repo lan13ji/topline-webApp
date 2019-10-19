@@ -34,10 +34,10 @@
           hairline
           plain
           size="small"
-          type="primary"
-          :icon="article.attitude === 1 ? 'good-job' : 'good-job-o'"
+          :type="likeDom.likeType"
+          :icon="likeDom.likeIcon"
           @click="onLike"
-        >{{article.attitude === 1 ? "取消点赞" : "点赞"}}</van-button>&emsp;
+        >{{likeDom.likeTxt}}</van-button>&emsp;
         <van-button round hairline plain size="small" type="danger" icon="delete">不喜欢</van-button>
       </div>
     </div>
@@ -49,13 +49,14 @@
 </template>
 
 <script>
-import { getDetail, unLike, addLike } from '@/api/articles'
+import { getDetail, unLikeArticle, likeArticle } from '@/api/articles'
 import { followUser, unFollowUser } from '@/api/user'
 export default {
   name: 'ArticleIndex',
   data () {
     return {
       article: {}, // 文章详情
+      likeDom: {},
       loading: true // 控制加载中的 loading 状态
     }
   },
@@ -80,6 +81,7 @@ export default {
          * recomments: [] // 相关文章推荐，无推荐为空数组
          */
         this.article = data.data
+        this.setLike(this.article.attitude === 1)
       } catch (err) {
         console.log(err)
       }
@@ -100,14 +102,24 @@ export default {
     // 点赞功能
     async onLike () {
       const articleId = this.article.art_id.toString()
-      const i = this.article.attitude
+      const { attitude } = this.article
       // (-1 无态度，0 不喜欢，1 点赞)
-      if (i === 1) {
-        this.article.attitude = -1
-        await unLike(articleId)
+      if (attitude === 1) {
+        console.log(attitude, '取消点赞')
+        await unLikeArticle(articleId)
       } else {
-        this.article.attitude = 1
-        await addLike(articleId)
+        console.log(attitude, '点赞')
+        await likeArticle(articleId)
+      }
+      this.article.attitude = -attitude
+      this.setLike(attitude !== 1)
+    },
+    // 设置点赞Dom
+    setLike (flag) {
+      this.likeDom = {
+        likeType: flag ? 'default' : 'primary',
+        likeIcon: flag ? 'good-job' : 'good-job-o',
+        likeTxt: flag ? '取消点赞' : '点赞'
       }
     }
   },

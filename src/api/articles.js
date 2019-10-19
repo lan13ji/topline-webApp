@@ -21,19 +21,41 @@ export function getDetail (articleId) {
 }
 
 // 点赞
-export function addLike (articleID) {
+export const likeArticle = articleId => {
+  console.log('点赞')
+
   return request({
     method: 'POST',
     url: '/app/v1_0/article/likings',
     data: {
-      target: articleID
+      target: articleId
     }
   })
 }
+
 // 取消点赞
-export function unLike (articleID) {
+export const unLikeArticle = articleId => {
+  console.log('取消点赞')
   return request({
     method: 'DELETE',
-    url: `/app/v1_0/article/likings/${articleID}`
+    url: `/app/v1_0/article/likings/${articleId}`
   })
 }
+
+/*
+ export function likeArticle (articleId) {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/article/likings',
+    data: {
+      target: articleId
+    }
+  })
+}
+export unLikeArticle (articleId) {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/article/likings/${articleId}`
+  })
+}
+ */
