@@ -36,6 +36,7 @@ import { getComments } from '@/api/comments'
 
 export default {
   name: 'ArticleComment',
+  props: ['articleId'],
   data () {
     return {
       list: [], // 评论列表

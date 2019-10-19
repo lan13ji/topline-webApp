@@ -55,7 +55,7 @@
       <p>网络超时，点击<a href="#">刷新</a>试一试</p>
     </div>
     <!-- 文章评论 -->
-    <article-comment />
+    <article-comment :article-id="$route.params.articleId" />
   </div>
 </template>
 
