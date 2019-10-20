@@ -17,7 +17,7 @@
           <p style="color: #363636">{{ comment.content }}</p>
           <p>
             <span style="margin-right: 10px;">{{ comment.pubdate | relativeTime }}</span>
-            <van-button size="mini" type="default" @click="onReplyShow">回复 {{ comment.reply_count}}</van-button>
+            <van-button size="mini" type="default" @click="onReplyShow(comment)">回复 {{ comment.reply_count}}</van-button>
           </p>
         </div>
         <van-icon
@@ -35,7 +35,7 @@
     </van-cell-group>
     <!-- 评论回复 -->
     <van-popup v-model="isReplyShow" round position="bottom" :style="{height: '90%'}">
-      <comment-reply />
+      <comment-reply :comment="curComment" v-if="isReplyShow" />
     </van-popup>
   </div>
 </template>
@@ -61,7 +61,8 @@ export default {
       finished: false, // 是否加载结束
       offset: null, // 获取下一页数据的页码
       commentText: '', // 输入的评论内容
-      isReplyShow: false // 控制回复评论弹窗显示
+      isReplyShow: false, // 控制回复评论弹窗显示
+      curComment: {} // 查看回复当前评论列表
     }
   },
   methods: {
@@ -75,7 +76,7 @@ export default {
        */
       const { data } = await getComments({
         type: 'a',
-        source: this.$route.params.articleId,
+        source: this.articleId,
         offset: this.offset
       })
       const { results } = data.data
@@ -114,9 +115,9 @@ export default {
       const commentText = this.commentText.trim()
       if (!commentText) return
       /**
-       * target: '', // 评论的目标id（评论文章即为文章id，对评论进行回复则为评论id）
+       * target: '', // 评论目标id,即为文章id
        * content: '', // 评论内容
-       * art_id: '' // 文章id
+       * art_id: '' // 文章id,对文章进行评论，不要传此参数
        */
       // 提交发布请求
       const { data } = await addComments({
@@ -144,7 +145,8 @@ export default {
     /**
      * 评论回复弹层
      */
-    onReplyShow () {
+    onReplyShow (comment) {
+      this.curComment = comment
       this.isReplyShow = true
     }
   }
