@@ -20,7 +20,7 @@
             <van-button size="mini" type="default">回复 {{ comment.reply_count}}</van-button>
           </p>
         </div>
-        <van-icon slot="right-icon" name="like-o"></van-icon>
+        <van-icon slot="right-icon" :name="comment.is_liking ? 'like' : 'like-o'" @click="onCommentLike(comment)" />
       </van-cell>
     </van-list>
     <!-- 发布评论 -->
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getComments, addComments } from '@/api/comments'
+import { getComments, addComments, addCommentLike, delCommentLike } from '@/api/comments'
 
 export default {
   name: 'ArticleComment',
@@ -105,11 +105,20 @@ export default {
         content: commentText
       })
       // 将新添加的评论数据展示在评论顶部
-      const { new_obj } = data.data
-      this.list.unshift(new_obj)
+      this.list.unshift(data.data.new_obj)
 
       // 清空评论内容
       this.commentText = ''
+    },
+    // 评论点赞功能
+    async onCommentLike (comment) {
+      const commentId = comment.com_id.toString()
+      if (comment.is_liking) {
+        await delCommentLike(commentId)
+      } else {
+        await addCommentLike(commentId)
+      }
+      comment.is_liking = !comment.is_liking
     }
   }
 }
