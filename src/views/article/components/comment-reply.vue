@@ -13,7 +13,7 @@
         <p style="color: #363636;">{{comment.content}}</p>
         <p>
           <span style="margin-right: 10px">{{ comment.pubdate | relativeTime }}</span>
-          <van-button size="mini" type="default">回复 {{ comment.reply_count }}</van-button>
+          <!-- <van-button size="mini" type="default">回复 {{ comment.reply_count }}</van-button> -->
         </p>
       </div>
       <van-icon slot="right-icon" />
@@ -23,13 +23,13 @@
     <!-- 回复评论列表 -->
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
       <van-cell v-for="(reply,index) in list" :key="index">
-        <van-image slot="icon" round width="30" height="30" style="margin-right: 10px" src />
+        <van-image slot="icon" round width="30" height="30" style="margin-right: 10px" :src="comment.aut_photo" />
         <span style="color: #466b9d" slot="title">{{ reply.aut_name }}</span>
         <div slot="label">
           <p style="color: #363636;">{{ reply.content }}</p>
           <p>
             <span style="margin-right: 10px">{{reply.pubdate | relativeTime}}</span>
-            <van-button size="mini" type="default">回复 {{ reply.reply_count }}</van-button>
+            <!-- <van-button size="mini" type="default">回复 {{ reply.reply_count }}</van-button> -->
           </p>
         </div>
         <van-icon slot="right-icon" :name="reply.is_liking ? 'like' : 'like-o'" @click="onCommentLike(reply)"></van-icon>
@@ -105,17 +105,22 @@ export default {
       this.list.unshift(data.data.new_obj)
       // 清空文本框
       this.commentText = ''
+
+      // 更新当前评论的回复数量
+      this.comment.reply_count++
     },
     /**
      *评论点赞功能
      */
-    async onCommentLike (comment) {
-      const commentId = comment.com_id.toString()
-      if (comment.is_liking) {
+    async onCommentLike (reply) {
+      const commentId = reply.com_id.toString()
+      console.log(reply.is_liking)
+      if (reply.is_liking) {
         await delCommentLike(commentId)
       } else {
         await addCommentLike(commentId)
       }
+      reply.is_liking = !reply.is_liking
     }
   }
 }
