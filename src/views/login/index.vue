@@ -66,14 +66,14 @@ export default {
 
         // 先清除 loading
         // 如果之后有 success、fail 之类的提示，就不需要手动关闭 loading 了
-        // toast.clear()
+        toast.clear()
 
         const that = this
         this.$toast.success({
           duration: 500,
           message: '登录成功',
           onClose () {
-            // that.$router.push({ name: 'home' })
+            that.$router.push({ name: 'home' })
           }
         })
 

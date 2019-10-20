@@ -34,7 +34,9 @@
       </van-field>
     </van-cell-group>
     <!-- 评论回复 -->
-    <van-popup v-model="isReplyShow" round position="bottom" :style="{height: '90%'}"></van-popup>
+    <van-popup v-model="isReplyShow" round position="bottom" :style="{height: '90%'}">
+      <comment-reply />
+    </van-popup>
   </div>
 </template>
 
@@ -45,9 +47,12 @@ import {
   addCommentLike,
   delCommentLike
 } from '@/api/comments'
-
+import CommentReply from './comment-reply'
 export default {
   name: 'ArticleComment',
+  components: {
+    CommentReply
+  },
   props: ['articleId'],
   data () {
     return {
@@ -140,7 +145,7 @@ export default {
      * 评论回复弹层
      */
     onReplyShow () {
-      this.is_liking = true
+      this.isReplyShow = true
     }
   }
 }
