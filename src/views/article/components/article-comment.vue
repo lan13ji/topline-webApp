@@ -35,7 +35,7 @@
     </van-cell-group>
     <!-- 评论回复 -->
     <van-popup v-model="isReplyShow" round position="bottom" :style="{height: '90%'}">
-      <comment-reply :comment="curComment" v-if="isReplyShow" />
+      <comment-reply :comment="curComment" v-if="isReplyShow" @close="isReplyShow = false" />
     </van-popup>
   </div>
 </template>

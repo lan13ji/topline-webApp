@@ -2,7 +2,7 @@
   <div class="article-comments">
     <!-- 导航栏 -->
     <van-nav-bar :title="comment.reply_count+'条回复'">
-      <van-icon slot="left" name="cross"></van-icon>
+      <van-icon class="close-icon" slot="left" name="cross" @click="$emit('close')"></van-icon>
     </van-nav-bar>
 
     <!-- 当前评论 -->
@@ -13,7 +13,7 @@
         <p style="color: #363636;">{{comment.content}}</p>
         <p>
           <span style="margin-right: 10px">{{ comment.pubdate | relativeTime }}</span>
-          <!-- <van-button size="mini" type="default">回复 {{ comment.reply_count }}</van-button> -->
+          <van-button size="mini" type="default">回复 {{ comment.reply_count }}</van-button>
         </p>
       </div>
       <van-icon slot="right-icon" />
@@ -29,7 +29,7 @@
           <p style="color: #363636;">{{ reply.content }}</p>
           <p>
             <span style="margin-right: 10px">{{reply.pubdate | relativeTime}}</span>
-            <!-- <van-button size="mini" type="default">回复 {{ reply.reply_count }}</van-button> -->
+            <van-button size="mini" type="default">回复 {{ reply.reply_count }}</van-button>
           </p>
         </div>
         <van-icon slot="right-icon" :name="reply.is_liking ? 'like' : 'like-o'" @click="onCommentLike(reply)"></van-icon>
@@ -127,6 +127,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+.close-icon{
+  color: #fff
+}
 .publish-wrap {
   position: fixed;
   left: 0;
