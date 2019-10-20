@@ -2,7 +2,7 @@
 <template>
   <div class="article-comments">
     <!-- 评论列表 -->
-   <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
       <van-cell v-for="comment in list" :key="comment.com_id.toString()">
         <van-image
           slot="icon"
@@ -17,10 +17,14 @@
           <p style="color: #363636">{{ comment.content }}</p>
           <p>
             <span style="margin-right: 10px;">{{ comment.pubdate | relativeTime }}</span>
-            <van-button size="mini" type="default">回复 {{ comment.reply_count}}</van-button>
+            <van-button size="mini" type="default" @click="onReplyShow">回复 {{ comment.reply_count}}</van-button>
           </p>
         </div>
-        <van-icon slot="right-icon" :name="comment.is_liking ? 'like' : 'like-o'" @click="onCommentLike(comment)" />
+        <van-icon
+          slot="right-icon"
+          :name="comment.is_liking ? 'like' : 'like-o'"
+          @click="onCommentLike(comment)"
+        />
       </van-cell>
     </van-list>
     <!-- 发布评论 -->
@@ -29,11 +33,18 @@
         <van-button slot="button" size="mini" type="info" @click="onAddComment">发布</van-button>
       </van-field>
     </van-cell-group>
+    <!-- 评论回复 -->
+    <van-popup v-model="isReplyShow" round position="bottom" :style="{height: '90%'}"></van-popup>
   </div>
 </template>
 
 <script>
-import { getComments, addComments, addCommentLike, delCommentLike } from '@/api/comments'
+import {
+  getComments,
+  addComments,
+  addCommentLike,
+  delCommentLike
+} from '@/api/comments'
 
 export default {
   name: 'ArticleComment',
@@ -44,7 +55,8 @@ export default {
       loading: false, // 上拉加载更多的loading
       finished: false, // 是否加载结束
       offset: null, // 获取下一页数据的页码
-      commentText: ''
+      commentText: '', // 输入的评论内容
+      isReplyShow: false // 控制回复评论弹窗显示
     }
   },
   methods: {
@@ -89,7 +101,9 @@ export default {
         this.finished = true
       }
     },
-    /* 发布评论 */
+    /**
+     * 发布评论
+     */
     async onAddComment () {
       // 获取评论内容
       const commentText = this.commentText.trim()
@@ -110,7 +124,9 @@ export default {
       // 清空评论内容
       this.commentText = ''
     },
-    // 评论点赞功能
+    /**
+     * 评论点赞功能
+     */
     async onCommentLike (comment) {
       const commentId = comment.com_id.toString()
       if (comment.is_liking) {
@@ -119,6 +135,12 @@ export default {
         await addCommentLike(commentId)
       }
       comment.is_liking = !comment.is_liking
+    },
+    /**
+     * 评论回复弹层
+     */
+    onReplyShow () {
+      this.is_liking = true
     }
   }
 }
@@ -129,8 +151,7 @@ export default {
   position: fixed;
   left: 0;
   bottom: 0;
-  width: 100%
-
+  width: 100%;
 }
 .van-list {
   margin-bottom: 45px;
